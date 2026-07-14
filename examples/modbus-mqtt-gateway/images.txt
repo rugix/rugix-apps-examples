@@ -1,0 +1,3 @@
+pull docker.io/library/eclipse-mosquitto:2.0
+build localhost/rugix-apps-examples/modbus-simulator:0.1.0 services/modbus-simulator
+build localhost/rugix-apps-examples/modbus-mqtt-bridge:0.1.0 services/modbus-mqtt-bridge

@@ -1,0 +1,11 @@
+.tools/
+.venv/
+.pytest_cache/
+.runtime/
+dist/
+test-outputs/
+vm/.rugix/
+vm/build/
+vm/ssh/
+__pycache__/
+*.pyc

@@ -1,0 +1,15 @@
+parent = "core/debian-trixie"
+
+recipes = [
+    "core/debian-grub-setup",
+    "core/set-hostname",
+    "core/persist-root-home",
+    "core/ssh",
+    "setup-network",
+    "install-docker",
+    "core/pkg-cleanup",
+]
+
+[parameters."core/set-hostname"]
+hostname = "rugix-apps-test"
+

@@ -1,0 +1,42 @@
+services:
+  broker:
+    image: docker.io/library/eclipse-mosquitto:2.0
+    volumes:
+      - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_sub -h localhost -t '$$SYS/#' -C 1 -W 3 >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+
+  opcua-server:
+    image: localhost/rugix-apps-examples/opcua-server:0.1.0
+    environment:
+      OPCUA_ENDPOINT: opc.tcp://0.0.0.0:4840/rugix/examples/server/
+    healthcheck:
+      test: ["CMD", "python", "/app/healthcheck.py"]
+      interval: 5s
+      timeout: 4s
+      retries: 18
+
+  bridge:
+    image: localhost/rugix-apps-examples/opcua-mqtt-bridge:0.1.0
+    depends_on:
+      broker:
+        condition: service_healthy
+      opcua-server:
+        condition: service_healthy
+    environment:
+      DATA_DIR: /data
+      MQTT_HOST: broker
+      MQTT_PORT: "1883"
+      MQTT_TOPIC: factory/cell-4/cnc-7/telemetry
+      OPCUA_ENDPOINT: opc.tcp://opcua-server:4840/rugix/examples/server/
+      POLL_INTERVAL_SECONDS: "2"
+    volumes:
+      - ${RUGIX_APP_DATA_DIR:-./.runtime/data}/bridge:/data
+    healthcheck:
+      test: ["CMD-SHELL", "test -s /data/latest-opcua.json"]
+      interval: 5s
+      timeout: 4s
+      retries: 24

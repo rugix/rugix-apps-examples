@@ -1,0 +1,25 @@
+{
+  "name": "opcua-mqtt-bridge",
+  "summary": "Bridge selected OPC UA machine nodes into normalized MQTT telemetry.",
+  "industrialUseCase": "OPC UA edge protocol translation for CNC or machine-cell data collection.",
+  "protocols": ["OPC UA", "MQTT"],
+  "nexigonOverlap": false,
+  "components": [
+    {
+      "name": "Eclipse Mosquitto",
+      "role": "MQTT broker",
+      "license": "EPL-2.0 / EDL-1.0"
+    },
+    {
+      "name": "asyncua",
+      "role": "OPC UA server and client library",
+      "license": "LGPL-3.0-or-later"
+    },
+    {
+      "name": "Eclipse Paho MQTT Python client",
+      "role": "MQTT publishing client",
+      "license": "EPL-2.0 / EDL-1.0"
+    }
+  ]
+}
+

@@ -1,0 +1,3 @@
+pull docker.io/library/eclipse-mosquitto:2.0
+build localhost/rugix-apps-examples/mqtt-source-simulator:0.1.0 services/source-simulator
+build localhost/rugix-apps-examples/mqtt-edge-historian:0.1.0 services/historian

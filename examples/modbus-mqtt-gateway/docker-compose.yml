@@ -1,0 +1,43 @@
+services:
+  broker:
+    image: docker.io/library/eclipse-mosquitto:2.0
+    volumes:
+      - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_sub -h localhost -t '$$SYS/#' -C 1 -W 3 >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+
+  simulator:
+    image: localhost/rugix-apps-examples/modbus-simulator:0.1.0
+    environment:
+      MODBUS_PORT: "5020"
+    healthcheck:
+      test: ["CMD", "python", "/app/healthcheck.py"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+
+  gateway:
+    image: localhost/rugix-apps-examples/modbus-mqtt-bridge:0.1.0
+    depends_on:
+      broker:
+        condition: service_healthy
+      simulator:
+        condition: service_healthy
+    environment:
+      DATA_DIR: /data
+      MODBUS_HOST: simulator
+      MODBUS_PORT: "5020"
+      MQTT_HOST: broker
+      MQTT_PORT: "1883"
+      MQTT_TOPIC: factory/line-1/press-17/telemetry
+      POLL_INTERVAL_SECONDS: "2"
+    volumes:
+      - ${RUGIX_APP_DATA_DIR:-./.runtime/data}/gateway:/data
+    healthcheck:
+      test: ["CMD-SHELL", "test -s /data/latest-modbus.json"]
+      interval: 5s
+      timeout: 4s
+      retries: 18

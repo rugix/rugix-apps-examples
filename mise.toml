@@ -1,0 +1,20 @@
+[tools]
+"github:rugix/rugix" = { version = "latest", matching = "binaries", filter_bins = "rugix-bundler" }
+
+[tasks.podman-build]
+run = "tools/podman-build.sh"
+
+[tasks.build]
+run = "tools/build-bundles.sh"
+
+[tasks.build-no-images]
+run = "tools/build-bundles.sh --no-images"
+
+[tasks.test]
+run = "tools/test.sh"
+
+[tasks.test-image]
+run = "tools/build-test-image.sh"
+
+[tasks.vm-test]
+run = 'tools/vm-test.sh "${APP:-modbus-mqtt-gateway}"'

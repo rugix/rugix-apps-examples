@@ -1,0 +1,3 @@
+pull docker.io/library/eclipse-mosquitto:2.0
+build localhost/rugix-apps-examples/opcua-server:0.1.0 services/opcua-server
+build localhost/rugix-apps-examples/opcua-mqtt-bridge:0.1.0 services/opcua-mqtt-bridge

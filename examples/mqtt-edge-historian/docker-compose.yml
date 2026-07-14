@@ -1,0 +1,47 @@
+services:
+  broker:
+    image: docker.io/library/eclipse-mosquitto:2.0
+    volumes:
+      - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_sub -h localhost -t '$$SYS/#' -C 1 -W 3 >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+
+  publisher:
+    image: localhost/rugix-apps-examples/mqtt-source-simulator:0.1.0
+    depends_on:
+      broker:
+        condition: service_healthy
+    environment:
+      MQTT_HOST: broker
+      MQTT_PORT: "1883"
+      MQTT_TOPIC: factory/line-2/welder-3/telemetry
+      PUBLISH_INTERVAL_SECONDS: "1"
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/publisher-ready"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+
+  historian:
+    image: localhost/rugix-apps-examples/mqtt-edge-historian:0.1.0
+    depends_on:
+      broker:
+        condition: service_healthy
+      publisher:
+        condition: service_started
+    environment:
+      API_PORT: "8080"
+      DATA_DIR: /data
+      MQTT_HOST: broker
+      MQTT_PORT: "1883"
+      MQTT_TOPIC: factory/+/+/telemetry
+    volumes:
+      - ${RUGIX_APP_DATA_DIR:-./.runtime/data}/historian:/data
+    healthcheck:
+      test: ["CMD", "python", "/app/healthcheck.py"]
+      interval: 5s
+      timeout: 4s
+      retries: 24

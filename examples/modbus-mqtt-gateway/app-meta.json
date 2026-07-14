@@ -1,0 +1,25 @@
+{
+  "name": "modbus-mqtt-gateway",
+  "summary": "Poll Modbus TCP registers from a PLC-like endpoint and publish normalized MQTT telemetry.",
+  "industrialUseCase": "PLC-to-MQTT protocol translation for machine data collection.",
+  "protocols": ["Modbus TCP", "MQTT"],
+  "nexigonOverlap": false,
+  "components": [
+    {
+      "name": "Eclipse Mosquitto",
+      "role": "MQTT broker",
+      "license": "EPL-2.0 / EDL-1.0"
+    },
+    {
+      "name": "Python",
+      "role": "Simulator and gateway runtime",
+      "license": "Python Software Foundation License"
+    },
+    {
+      "name": "Eclipse Paho MQTT Python client",
+      "role": "MQTT publishing client",
+      "license": "EPL-2.0 / EDL-1.0"
+    }
+  ]
+}
+

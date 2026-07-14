@@ -1,0 +1,5 @@
+[systems.apps-test-amd64]
+layer = "apps-test"
+architecture = "amd64"
+target = "generic-grub-efi"
+

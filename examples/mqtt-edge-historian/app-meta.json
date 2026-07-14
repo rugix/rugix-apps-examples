@@ -1,0 +1,35 @@
+{
+  "name": "mqtt-edge-historian",
+  "summary": "Persist MQTT telemetry locally in SQLite and expose a small local query API.",
+  "industrialUseCase": "Local store-and-forward buffer or machine-cell diagnostic historian.",
+  "protocols": ["MQTT", "HTTP", "SQLite"],
+  "nexigonOverlap": false,
+  "components": [
+    {
+      "name": "Eclipse Mosquitto",
+      "role": "MQTT broker",
+      "license": "EPL-2.0 / EDL-1.0"
+    },
+    {
+      "name": "SQLite",
+      "role": "Embedded local historian database",
+      "license": "Public domain"
+    },
+    {
+      "name": "FastAPI",
+      "role": "Local HTTP API",
+      "license": "MIT"
+    },
+    {
+      "name": "Uvicorn",
+      "role": "ASGI HTTP server",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "Eclipse Paho MQTT Python client",
+      "role": "MQTT publishing and consuming client",
+      "license": "EPL-2.0 / EDL-1.0"
+    }
+  ]
+}
+
