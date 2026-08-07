@@ -1,0 +1,164 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+env:
+  RUGIX_VERSION: v1.3.0
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Run tests
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/pip install --disable-pip-version-check "pytest>=8"
+          .venv/bin/pytest
+
+  app-bundles:
+    name: Build App Bundles (${{ matrix.arch }})
+    runs-on: ubuntu-latest
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            platform: linux/amd64
+          - arch: arm64
+            platform: linux/arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up QEMU
+        if: matrix.arch == 'arm64'
+        uses: docker/setup-qemu-action@v4
+        with:
+          platforms: arm64
+
+      - name: Install container tools
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y podman skopeo
+
+      - name: Install Rugix Bundler
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          case "$(uname -m)" in
+              x86_64|amd64) triple="x86_64-unknown-linux-musl" ;;
+              aarch64|arm64) triple="aarch64-unknown-linux-musl" ;;
+              *) echo "unsupported runner architecture: $(uname -m)" >&2; exit 1 ;;
+          esac
+
+          mkdir -p .tools
+          tmpdir="$(mktemp -d)"
+          trap 'rm -rf "${tmpdir}"' EXIT
+
+          curl -fsSL \
+              "https://github.com/rugix/rugix/releases/download/${RUGIX_VERSION}/binaries-${triple}.tar" \
+              -o "${tmpdir}/rugix-binaries.tar"
+          tar -xf "${tmpdir}/rugix-binaries.tar" -C "${tmpdir}"
+
+          bundler="$(find "${tmpdir}" -type f -name rugix-bundler -perm -111 | head -n 1)"
+          if [ -z "${bundler}" ]; then
+              echo "rugix-bundler not found in release archive" >&2
+              exit 1
+          fi
+          install -m 0755 "${bundler}" .tools/rugix-bundler
+
+      - name: Build app bundles
+        env:
+          RUGIX_BUNDLER: ${{ github.workspace }}/.tools/rugix-bundler
+          RUGIX_DIST_DIR: ${{ github.workspace }}/build/${{ matrix.arch }}
+          RUGIX_PLATFORM: ${{ matrix.platform }}
+        run: tools/build-bundles.sh
+
+      - name: Collect release assets
+        env:
+          ARCH: ${{ matrix.arch }}
+          RUGIX_BUNDLER: ${{ github.workspace }}/.tools/rugix-bundler
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+
+          bundles=(build/"${ARCH}"/*.rugixb)
+          if [ "${#bundles[@]}" -eq 0 ]; then
+              echo "[ERROR] no app bundles found for ${ARCH}"
+              exit 1
+          fi
+
+          mkdir -p dist
+          for bundle in "${bundles[@]}"; do
+              name="$(basename "${bundle}" .rugixb)"
+              output="dist/${name}-${ARCH}.rugixb"
+              mv "${bundle}" "${output}"
+              "${RUGIX_BUNDLER}" hash "${output}" > "${output}-hash"
+          done
+
+      - name: Upload app bundles
+        uses: actions/upload-artifact@v7
+        with:
+          name: app-bundles-${{ matrix.arch }}
+          path: dist/
+          if-no-files-found: error
+          compression-level: 0
+
+  publish-release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    needs:
+      - app-bundles
+    if: github.ref_type == 'tag'
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Download app bundles
+        uses: actions/download-artifact@v8
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Publish release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+
+          files=(dist/*)
+          if [ "${#files[@]}" -eq 0 ]; then
+              echo "[ERROR] no release assets found"
+              exit 1
+          fi
+
+          if gh release view "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+              gh release upload "${GITHUB_REF_NAME}" "${files[@]}" \
+                  --repo "${GITHUB_REPOSITORY}" \
+                  --clobber
+          else
+              gh release create "${GITHUB_REF_NAME}" "${files[@]}" \
+                  --repo "${GITHUB_REPOSITORY}" \
+                  --title "${GITHUB_REF_NAME}" \
+                  --notes "Prebuilt Rugix Apps examples for ${GITHUB_SHA}."
+          fi

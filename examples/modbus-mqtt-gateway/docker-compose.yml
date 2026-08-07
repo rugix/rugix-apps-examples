@@ -11,6 +11,9 @@ services:
 
   simulator:
     image: localhost/rugix-apps-examples/modbus-simulator:0.1.0
+    x-rugix:
+      image:
+        source: containers-storage
     environment:
       MODBUS_PORT: "5020"
     healthcheck:
@@ -21,6 +24,9 @@ services:
 
   gateway:
     image: localhost/rugix-apps-examples/modbus-mqtt-bridge:0.1.0
+    x-rugix:
+      image:
+        source: containers-storage
     depends_on:
       broker:
         condition: service_healthy

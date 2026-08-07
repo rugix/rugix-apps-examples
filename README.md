@@ -42,6 +42,30 @@ tools/build-bundles.sh --no-images
 tools/test.sh
 ```
 
+## Prebuilt App Bundles
+
+CI builds every example for `linux/amd64` and `linux/arm64`. Pull requests and
+branch builds expose the bundles as workflow artifacts. A tagged commit also
+creates a GitHub release containing the bundles.
+
+Release filenames identify both the example and target architecture. For
+example, the Python web-server assets are:
+
+```text
+python-web-server-amd64.rugixb
+python-web-server-amd64.rugixb-hash
+python-web-server-arm64.rugixb
+python-web-server-arm64.rugixb-hash
+```
+
+The hash files contain the Rugix bundle header hashes produced by
+`rugix-bundler hash`. Maintainers can create a release by pushing a tag:
+
+```sh
+git tag v0.1.0
+git push origin v0.1.0
+```
+
 ## VM Testing
 
 The optional VM path uses Rugix Bakery to create a Debian EFI test image with

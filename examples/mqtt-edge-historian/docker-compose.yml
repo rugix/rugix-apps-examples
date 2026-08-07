@@ -11,6 +11,9 @@ services:
 
   publisher:
     image: localhost/rugix-apps-examples/mqtt-source-simulator:0.1.0
+    x-rugix:
+      image:
+        source: containers-storage
     depends_on:
       broker:
         condition: service_healthy
@@ -27,6 +30,9 @@ services:
 
   historian:
     image: localhost/rugix-apps-examples/mqtt-edge-historian:0.1.0
+    x-rugix:
+      image:
+        source: containers-storage
     depends_on:
       broker:
         condition: service_healthy
