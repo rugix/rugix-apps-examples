@@ -2,13 +2,12 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PODMAN="${PODMAN:-podman}"
 PLATFORM="${RUGIX_PLATFORM:-linux/amd64}"
 ONLY_EXAMPLE=""
 
 usage() {
     cat <<'EOF'
-Usage: tools/podman-build.sh [OPTIONS]
+Usage: tools/docker-build.sh [OPTIONS]
 
 Options:
   --example NAME      Build one example.
@@ -26,8 +25,8 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if ! command -v "${PODMAN}" >/dev/null 2>&1; then
-    echo "podman is required; set PODMAN to override the binary" >&2
+if ! command -v docker >/dev/null 2>&1; then
+    echo "docker is required" >&2
     exit 1
 fi
 
@@ -50,7 +49,7 @@ for example_dir in "${example_dirs[@]}"; do
         case "${action}" in
             pull)
                 echo "pull ${image}"
-                "${PODMAN}" pull --platform "${PLATFORM}" "${image}"
+                docker pull --platform "${PLATFORM}" "${image}"
                 ;;
             build)
                 if [[ -z "${context:-}" ]]; then
@@ -58,7 +57,7 @@ for example_dir in "${example_dirs[@]}"; do
                     exit 1
                 fi
                 echo "build ${image}"
-                "${PODMAN}" build --platform "${PLATFORM}" -t "${image}" "${example_dir}/${context}"
+                docker build --platform "${PLATFORM}" -t "${image}" "${example_dir}/${context}"
                 ;;
             *)
                 echo "unknown image action '${action}' in ${manifest}" >&2
@@ -67,4 +66,3 @@ for example_dir in "${example_dirs[@]}"; do
         esac
     done < "${manifest}"
 done
-

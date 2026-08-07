@@ -13,7 +13,7 @@ services:
     image: localhost/rugix-apps-examples/modbus-simulator:0.1.0
     x-rugix:
       image:
-        source: containers-storage
+        source: docker-daemon
     environment:
       MODBUS_PORT: "5020"
     healthcheck:
@@ -26,7 +26,7 @@ services:
     image: localhost/rugix-apps-examples/modbus-mqtt-bridge:0.1.0
     x-rugix:
       image:
-        source: containers-storage
+        source: docker-daemon
     depends_on:
       broker:
         condition: service_healthy

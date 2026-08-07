@@ -32,7 +32,7 @@ Build app bundles in `dist/`:
 mise run build
 ```
 
-`tools/build-bundles.sh` uses Podman on the host to build local helper images
+`tools/build-bundles.sh` uses Docker on the host to build local helper images
 before packaging them with Rugix Bundler.
 
 For a fast structural check without bundling container images:

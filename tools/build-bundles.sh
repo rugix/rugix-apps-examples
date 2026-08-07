@@ -4,7 +4,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUNDLER="${RUGIX_BUNDLER:-rugix-bundler}"
 DIST_DIR="${RUGIX_DIST_DIR:-"${ROOT}/dist"}"
-PODMAN="${PODMAN:-podman}"
 PLATFORM="${RUGIX_PLATFORM:-linux/amd64}"
 NO_IMAGES=false
 SKIP_BUILD=false
@@ -16,9 +15,9 @@ Usage: tools/build-bundles.sh [OPTIONS]
 
 Options:
   --example NAME      Build one example.
-  --platform VALUE    Image platform for Podman builds/pulls, default linux/amd64.
+  --platform VALUE    Image platform for Docker builds/pulls, default linux/amd64.
   --no-images         Pack bundles without container image payloads.
-  --skip-build        Do not run tools/podman-build.sh first.
+  --skip-build        Do not run tools/docker-build.sh first.
   -h, --help          Show this help.
 EOF
 }
@@ -40,55 +39,12 @@ if ! command -v "${BUNDLER}" >/dev/null 2>&1; then
     exit 1
 fi
 
-if ! command -v "${PODMAN}" >/dev/null 2>&1 && [[ "${NO_IMAGES}" != true ]]; then
-    echo "podman is required unless --no-images is used" >&2
+if ! command -v docker >/dev/null 2>&1 && [[ "${NO_IMAGES}" != true ]]; then
+    echo "docker is required unless --no-images is used" >&2
     exit 1
 fi
 
 mkdir -p "${DIST_DIR}"
-
-shim_dir="${ROOT}/.runtime/podman-docker-shim"
-if [[ "${NO_IMAGES}" != true ]]; then
-    mkdir -p "${shim_dir}"
-    cat > "${shim_dir}/docker" <<'EOF'
-#!/usr/bin/env bash
-set -euo pipefail
-
-PODMAN_BIN="${PODMAN:-podman}"
-
-if [[ "${1:-}" == "save" ]]; then
-    shift
-    args=()
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            --platform)
-                shift 2
-                ;;
-            *)
-                args+=("$1")
-                shift
-                ;;
-        esac
-    done
-    exec "${PODMAN_BIN}" save "${args[@]}"
-fi
-
-if [[ "${1:-}" == "inspect" ]]; then
-    image="${@: -1}"
-    if [[ "${image}" == localhost/rugix-apps-examples/* ]]; then
-        for arg in "$@"; do
-            if [[ "${arg}" == *".RepoDigests"* ]]; then
-                echo
-                exit 0
-            fi
-        done
-    fi
-fi
-
-exec "${PODMAN_BIN}" "$@"
-EOF
-    chmod +x "${shim_dir}/docker"
-fi
 
 mapfile -t example_dirs < <(find "${ROOT}/examples" -mindepth 1 -maxdepth 1 -type d ! -name "_*" | sort)
 if [[ -n "${ONLY_EXAMPLE}" ]]; then
@@ -113,7 +69,7 @@ for example_dir in "${example_dirs[@]}"; do
     echo "building ${name}"
 
     if [[ "${SKIP_BUILD}" != true && "${NO_IMAGES}" != true ]]; then
-        PODMAN="${PODMAN}" "${ROOT}/tools/podman-build.sh" --platform "${PLATFORM}" --example "${name}"
+        "${ROOT}/tools/docker-build.sh" --platform "${PLATFORM}" --example "${name}"
     fi
 
     cmd=(
@@ -135,10 +91,6 @@ for example_dir in "${example_dirs[@]}"; do
 
     cmd+=(docker-compose.yml "${output}")
 
-    if [[ "${NO_IMAGES}" == true ]]; then
-        (cd "${example_dir}" && "${cmd[@]}")
-    else
-        (cd "${example_dir}" && PODMAN="${PODMAN}" PATH="${shim_dir}:${PATH}" "${cmd[@]}")
-    fi
+    (cd "${example_dir}" && "${cmd[@]}")
     echo "wrote ${output}"
 done

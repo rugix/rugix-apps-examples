@@ -1,8 +1,8 @@
 [tools]
 "github:rugix/rugix" = { version = "latest", matching = "binaries", filter_bins = "rugix-bundler" }
 
-[tasks.podman-build]
-run = "tools/podman-build.sh"
+[tasks.docker-build]
+run = "tools/docker-build.sh"
 
 [tasks.build]
 run = "tools/build-bundles.sh"

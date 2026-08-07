@@ -3,7 +3,7 @@ services:
     image: localhost/rugix-apps-examples/python-web-server:0.1.0
     x-rugix:
       image:
-        source: containers-storage
+        source: docker-daemon
     restart: unless-stopped
     ports:
       - "${PYTHON_WEB_PORT:-8080}:8080"

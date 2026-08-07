@@ -53,11 +53,11 @@ jobs:
         with:
           platforms: arm64
 
-      - name: Install container tools
+      - name: Install Skopeo
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y podman skopeo
+          sudo apt-get install -y skopeo
 
       - name: Install Rugix Bundler
         shell: bash

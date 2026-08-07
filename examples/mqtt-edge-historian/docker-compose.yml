@@ -13,7 +13,7 @@ services:
     image: localhost/rugix-apps-examples/mqtt-source-simulator:0.1.0
     x-rugix:
       image:
-        source: containers-storage
+        source: docker-daemon
     depends_on:
       broker:
         condition: service_healthy
@@ -32,7 +32,7 @@ services:
     image: localhost/rugix-apps-examples/mqtt-edge-historian:0.1.0
     x-rugix:
       image:
-        source: containers-storage
+        source: docker-daemon
     depends_on:
       broker:
         condition: service_healthy

@@ -18,8 +18,8 @@ use a different host port.
 Build the local container image and start the app:
 
 ```sh
-../../tools/podman-build.sh --example python-web-server
-podman compose up
+../../tools/docker-build.sh --example python-web-server
+docker compose up
 ```
 
 Open <http://localhost:8080> to view the page.

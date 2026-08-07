@@ -13,7 +13,7 @@ services:
     image: localhost/rugix-apps-examples/opcua-server:0.1.0
     x-rugix:
       image:
-        source: containers-storage
+        source: docker-daemon
     environment:
       OPCUA_ENDPOINT: opc.tcp://0.0.0.0:4840/rugix/examples/server/
     healthcheck:
@@ -26,7 +26,7 @@ services:
     image: localhost/rugix-apps-examples/opcua-mqtt-bridge:0.1.0
     x-rugix:
       image:
-        source: containers-storage
+        source: docker-daemon
     depends_on:
       broker:
         condition: service_healthy
