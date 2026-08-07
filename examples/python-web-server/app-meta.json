@@ -1,0 +1,14 @@
+{
+  "name": "python-web-server",
+  "summary": "Serve a simple static page from a local Python HTTP server.",
+  "industrialUseCase": "Local device landing page or operator information page.",
+  "protocols": ["HTTP"],
+  "nexigonOverlap": false,
+  "components": [
+    {
+      "name": "Python",
+      "role": "Static HTTP server runtime",
+      "license": "Python Software Foundation License"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+services:
+  web:
+    image: localhost/rugix-apps-examples/python-web-server:0.1.0
+    x-rugix:
+      image:
+        source: containers-storage
+    restart: unless-stopped
+    ports:
+      - "${PYTHON_WEB_PORT:-8080}:8080"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "from urllib.request import urlopen; response = urlopen('http://127.0.0.1:8080/', timeout=2); assert response.status == 200"
+      interval: 5s
+      timeout: 4s
+      retries: 12

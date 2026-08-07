@@ -22,6 +22,9 @@ case "${APP}" in
     opcua-mqtt-bridge)
         TARGET="tests/vm/test_opcua_mqtt_bridge.py"
         ;;
+    python-web-server)
+        TARGET="tests/vm/test_python_web_server.py"
+        ;;
     *)
         echo "unknown app '${APP}'" >&2
         exit 1
@@ -37,7 +40,8 @@ if [[ "${APP}" == "all" ]]; then
     for bundle in \
         "${BUNDLE_DIR}/modbus-mqtt-gateway.rugixb" \
         "${BUNDLE_DIR}/mqtt-edge-historian.rugixb" \
-        "${BUNDLE_DIR}/opcua-mqtt-bridge.rugixb"; do
+        "${BUNDLE_DIR}/opcua-mqtt-bridge.rugixb" \
+        "${BUNDLE_DIR}/python-web-server.rugixb"; do
         if [[ ! -f "${bundle}" ]]; then
             echo "app bundle missing: ${bundle}" >&2
             echo "run tools/build-bundles.sh" >&2

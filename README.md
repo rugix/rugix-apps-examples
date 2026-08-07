@@ -1,17 +1,19 @@
 # Rugix Apps Examples
 
-This repository contains industrial Rugix Apps examples that can be built into
-Rugix app bundles with `rugix-bundler`.
+This repository contains Rugix Apps examples that can be built into Rugix app
+bundles with `rugix-bundler`. They range from a small web-server starter app to
+industrial edge workloads.
 
-The examples intentionally focus on edge workloads such as protocol translation,
-local buffering, and local process data APIs. They avoid fleet management,
-remote access, OTA orchestration, device configuration management, and cloud
-telemetry features that would overlap with Nexigon.
+The industrial examples focus on edge workloads such as protocol translation,
+local buffering, and local process data APIs. The repository avoids fleet
+management, remote access, OTA orchestration, device configuration management,
+and cloud telemetry features that would overlap with Nexigon.
 
 ## Examples
 
 | Example | Pattern | Main components |
 | --- | --- | --- |
+| `python-web-server` | Serve a static local page from a minimal Python container. | Python |
 | `modbus-mqtt-gateway` | Poll a simulated PLC over Modbus TCP and publish normalized MQTT telemetry. | Python, Eclipse Mosquitto |
 | `opcua-mqtt-bridge` | Read machine values from an OPC UA server and bridge them into MQTT. | asyncua, Python, Eclipse Mosquitto |
 | `mqtt-edge-historian` | Persist MQTT telemetry locally and expose a small query API. | Python, SQLite, FastAPI, Eclipse Mosquitto |

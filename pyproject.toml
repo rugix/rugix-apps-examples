@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "rugix-apps-examples"
 version = "0.1.0"
-description = "Industrial Rugix Apps examples and test tooling."
+description = "Rugix Apps examples and test tooling."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []
