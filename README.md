@@ -4,9 +4,6 @@ This repository contains Rugix Apps examples that can be built into Rugix app
 bundles with `rugix-bundler`. They range from a small web-server starter app to
 industrial edge workloads.
 
-> [!NOTE]
-> **Support:** This repository is covered by [Tier 3: Example Integration](https://rugix.org/support-commitment/#tier-example-integration) of the Rugix Support Commitment.
-
 [Rugix](https://rugix.org) is an open-source toolkit for building and
 maintaining robust Linux-powered products. Rugix Apps is part of its on-device
 application lifecycle support; fleet management, remote access, and rollout
@@ -105,3 +102,9 @@ tools/vm-test.sh all
 All selected runtime components are open source. See [LICENSES.md](LICENSES.md)
 for the component/license matrix. Package versions in helper images are kept in
 each service's `requirements.txt`.
+
+## Support
+
+This repository is covered by
+[Tier 3: Example Integration](https://rugix.org/support-commitment/#tier-example-integration)
+of the Rugix Support Commitment.
