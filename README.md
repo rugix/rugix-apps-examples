@@ -4,10 +4,17 @@ This repository contains Rugix Apps examples that can be built into Rugix app
 bundles with `rugix-bundler`. They range from a small web-server starter app to
 industrial edge workloads.
 
-The industrial examples focus on edge workloads such as protocol translation,
-local buffering, and local process data APIs. The repository avoids fleet
-management, remote access, OTA orchestration, device configuration management,
-and cloud telemetry features that would overlap with Nexigon.
+> [!NOTE]
+> **Support:** This repository is covered by [Tier 3: Example Integration](https://rugix.org/support-commitment/#tier-example-integration) of the Rugix Support Commitment.
+
+[Rugix](https://rugix.org) is an open-source toolkit for building and
+maintaining robust Linux-powered products. Rugix Apps is part of its on-device
+application lifecycle support; fleet management, remote access, and rollout
+orchestration remain the responsibility of a separate fleet management
+solution.
+
+The industrial examples focus on device-local workloads such as protocol
+translation, buffering, and process data APIs.
 
 ## Examples
 
