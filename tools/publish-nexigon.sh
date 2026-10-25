@@ -4,7 +4,7 @@
 #
 # Every app is a package of the same name, which must exist. The release becomes
 # a version of each package with the release tag as locked tag, and the floating
-# tag `stable` moves to it. The bundles are attached with their hashes as
+# tag `latest` moves to it. The bundles are attached with their hashes as
 # `rugix.bundleHash` metadata. Running the script again for the same release
 # only attaches missing bundles.
 #
@@ -127,6 +127,6 @@ done
 for app in "${apps[@]}"; do
     version_id=$(resolve_or_create_version "${app}")
     attach_bundles "${app}" "${version_id}"
-    run_cli repositories versions tag "${version_id}" --tag stable,reassign >/dev/null
+    run_cli repositories versions tag "${version_id}" --tag latest,reassign >/dev/null
     echo "[INFO] published '${app}' ${RELEASE_TAG} to '${NEXIGON_REPOSITORY}/${app}'"
 done
