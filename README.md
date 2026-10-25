@@ -52,18 +52,25 @@ CI builds every example for `linux/amd64` and `linux/arm64`. Pull requests and
 branch builds expose the bundles as workflow artifacts. A tagged commit also
 creates a GitHub release containing the bundles.
 
-Release filenames identify both the example and target architecture. For
-example, the Python web-server assets are:
+Release filenames identify both the example and target architecture. They use
+the architecture names that Rugix Ctrl reports as `host.arch`, such as `x86_64`
+and `aarch64`, so tools can pick the bundle that matches a device. For example,
+the Python web-server assets are:
 
 ```text
-python-web-server-amd64.rugixb
-python-web-server-amd64.rugixb-hash
-python-web-server-arm64.rugixb
-python-web-server-arm64.rugixb-hash
+python-web-server-x86_64.rugixb
+python-web-server-aarch64.rugixb
 ```
 
-The hash files contain the Rugix bundle header hashes produced by
-`rugix-bundler hash`. Maintainers can create a release by pushing a tag:
+The bundles are not signed. To let Rugix Ctrl verify a downloaded bundle,
+compute its hash with Rugix Bundler and pass it to the installation:
+
+```sh
+rugix-bundler hash python-web-server-aarch64.rugixb
+rugix-ctrl apps install --bundle-hash <hash> python-web-server-aarch64.rugixb
+```
+
+Maintainers can create a release by pushing a tag:
 
 ```sh
 git tag v0.1.0

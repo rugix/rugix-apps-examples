@@ -37,10 +37,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - arch: amd64
+          - arch: x86_64
             platform: linux/amd64
             runner: ubuntu-24.04
-          - arch: arm64
+          - arch: aarch64
             platform: linux/arm64
             runner: ubuntu-24.04-arm
     steps:
@@ -92,7 +92,6 @@ jobs:
       - name: Collect release assets
         env:
           ARCH: ${{ matrix.arch }}
-          RUGIX_BUNDLER: ${{ github.workspace }}/.tools/rugix-bundler
         run: |
           set -euo pipefail
           shopt -s nullglob
@@ -106,9 +105,7 @@ jobs:
           mkdir -p dist
           for bundle in "${bundles[@]}"; do
               name="$(basename "${bundle}" .rugixb)"
-              output="dist/${name}-${ARCH}.rugixb"
-              mv "${bundle}" "${output}"
-              "${RUGIX_BUNDLER}" hash "${output}" > "${output}-hash"
+              mv "${bundle}" "dist/${name}-${ARCH}.rugixb"
           done
 
       - name: Upload app bundles
