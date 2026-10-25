@@ -192,7 +192,7 @@ jobs:
       - name: Publish app bundles
         env:
           NEXIGON_CLI: ./nexigon-cli
-          NEXIGON_REPOSITORY: ${{ vars.NEXIGON_STAGING_REPOSITORY }}
+          NEXIGON_REPOSITORY: default
           NEXIGON_STAGING_TOKEN: ${{ secrets.NEXIGON_STAGING_TOKEN }}
           RELEASE_TAG: ${{ github.ref_name }}
           SOURCE_COMMIT: ${{ github.sha }}
