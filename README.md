@@ -49,7 +49,7 @@ tools/test.sh
 ## Prebuilt App Bundles
 
 CI builds every example for `linux/amd64` and `linux/arm64`. Pull requests and
-branch builds expose the bundles as workflow artifacts. A tagged commit also
+builds of `main` expose the bundles as workflow artifacts. A tagged commit also
 creates a GitHub release containing the bundles.
 
 Release filenames identify both the example and target architecture. They use

@@ -1,7 +1,12 @@
 name: CI
 
 on:
+  # Pull requests cover other branches, so that their pushes do not run twice.
   push:
+    branches:
+      - main
+    tags:
+      - "**"
   pull_request:
   workflow_dispatch:
 
