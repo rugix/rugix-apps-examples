@@ -72,6 +72,12 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
+CI also publishes every release to the Nexigon repository configured in the
+`nexigon-staging` environment, for demos and testing. Each example is a package
+of the same name, which must exist. The release becomes a version tagged with
+the release tag and `stable`, with the bundles' hashes as asset metadata. See
+`tools/publish-nexigon.sh` for details.
+
 ## VM Testing
 
 The optional VM path uses Rugix Bakery to create a Debian EFI test image with
