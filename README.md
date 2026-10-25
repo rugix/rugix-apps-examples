@@ -59,18 +59,13 @@ the Python web-server assets are:
 
 ```text
 python-web-server-x86_64.rugixb
+python-web-server-x86_64.rugixb-hash
 python-web-server-aarch64.rugixb
+python-web-server-aarch64.rugixb-hash
 ```
 
-The bundles are not signed. To let Rugix Ctrl verify a downloaded bundle,
-compute its hash with Rugix Bundler and pass it to the installation:
-
-```sh
-rugix-bundler hash python-web-server-aarch64.rugixb
-rugix-ctrl apps install --bundle-hash <hash> python-web-server-aarch64.rugixb
-```
-
-Maintainers can create a release by pushing a tag:
+The hash files contain the Rugix bundle header hashes produced by
+`rugix-bundler hash`. Maintainers can create a release by pushing a tag:
 
 ```sh
 git tag v0.1.0
