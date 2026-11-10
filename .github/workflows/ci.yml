@@ -14,9 +14,6 @@ permissions:
   actions: read
   contents: read
 
-env:
-  RUGIX_VERSION: v1.3.0
-
 jobs:
   test:
     name: Test
@@ -69,7 +66,6 @@ jobs:
 
       - name: Build app bundles
         env:
-          RUGIX_BUNDLER: ${{ github.workspace }}/.scripts/rugix-bundler
           RUGIX_DIST_DIR: ${{ github.workspace }}/build/${{ matrix.arch }}
           RUGIX_PLATFORM: ${{ matrix.platform }}
         run: mise run build
