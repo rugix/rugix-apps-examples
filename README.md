@@ -24,7 +24,9 @@ translation, buffering, and process data APIs.
 
 ## Quick Start
 
-Install the current Rugix Bundler release through mise's GitHub backend:
+Install Nix with flakes enabled and mise. The native environments support
+x86-64 and AArch64 Linux. Install the pinned Rugix Bundler, Nexigon CLI,
+Python, and uv through mise:
 
 ```sh
 mise install
@@ -36,14 +38,14 @@ Build app bundles in `dist/`:
 mise run build
 ```
 
-`tools/build-bundles.sh` uses Docker on the host to build local helper images
+`mise run build` uses Docker on the host to build local helper images
 before packaging them with Rugix Bundler.
 
 For a fast structural check without bundling container images:
 
 ```sh
-tools/build-bundles.sh --no-images
-tools/test.sh
+mise run build-no-images
+mise run test
 ```
 
 ## Prebuilt App Bundles
@@ -76,7 +78,7 @@ CI also publishes every release to the `default` repository on
 `staging.nexigon.dev`, for demos and testing. Each example is a package
 of the same name, which must exist. The release becomes a version tagged with
 the release tag and `latest`, with the bundles' hashes as asset metadata. See
-`tools/publish-nexigon.sh` for details.
+`scripts/publish-nexigon.sh` for details.
 
 ## VM Testing
 
@@ -88,9 +90,9 @@ known at the time of writing, `v0.9.3`. Override it with `RUGIX_VERSION` or
 `RUGIX_BAKERY_IMAGE` when testing a newer Bakery image.
 
 ```sh
-tools/build-test-image.sh
-tools/build-bundles.sh
-tools/vm-test.sh modbus-mqtt-gateway
+mise run test-image
+mise run build
+mise run vm-test modbus-mqtt-gateway
 ```
 
 Each app has its own pytest module under `tests/vm/`. The shared fixture boots
@@ -102,7 +104,7 @@ Docker Compose service.
 Run all VM app tests with:
 
 ```sh
-tools/vm-test.sh all
+mise run vm-test all
 ```
 
 ## Open Source Status
@@ -116,3 +118,12 @@ each service's `requirements.txt`.
 This repository is covered by
 [Tier 3: Example Integration](https://rugix.org/support-commitment/#tier-example-integration)
 of the Rugix Support Commitment.
+
+Mise tasks select Nix for Skopeo, SSH tools, QEMU, and OVMF when needed.
+Docker Engine and its CLI must be available for the helper-image builds.
+Builds default to `linux/amd64`. For native ARM64 builds, run
+`RUGIX_PLATFORM=linux/arm64 mise run build`. The VM test image is x86-64;
+on ARM64 hosts, QEMU runs it with software emulation.
+Python dependencies are locked in `uv.lock`; VM tests install the pinned
+Rugix Testkit dependency without requiring an adjacent checkout. The
+`scripts/` directory implements build, collection, and publication steps.

@@ -10,6 +10,9 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []
 
+[project.optional-dependencies]
+vm = ["rugix-testkit @ git+https://github.com/rugix/rugix-testkit.git@118e7ba4e418e7d3adeafccad0314e043c239154"]
+
 [dependency-groups]
 dev = ["pytest>=8.0"]
 

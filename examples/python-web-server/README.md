@@ -18,7 +18,7 @@ use a different host port.
 Build the local container image and start the app:
 
 ```sh
-../../tools/docker-build.sh --example python-web-server
+../../scripts/docker-build.sh --example python-web-server
 docker compose up
 ```
 
@@ -27,5 +27,5 @@ Open <http://localhost:8080> to view the page.
 ## Bundle
 
 ```sh
-../../tools/build-bundles.sh --example python-web-server
+mise -C ../.. run build -- --example python-web-server
 ```

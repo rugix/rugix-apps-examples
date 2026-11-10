@@ -1,20 +1,42 @@
 [tools]
-"github:rugix/rugix" = { version = "latest", matching = "binaries", filter_bins = "rugix-bundler" }
+python = "3.12"
+uv = "latest"
+"github:rugix/rugix" = { version = "1.3.0", matching = "unknown-linux-musl.tar", filter_bins = "rugix-bundler" }
+"github:nexigon/nexigon" = { version = "0.6.0", matching = "unknown-linux-musl.tar.gz", filter_bins = "nexigon-cli" }
 
 [tasks.docker-build]
-run = "tools/docker-build.sh"
+description = "Build the helper container images with Docker."
+run = 'bash scripts/docker-build.sh "$@"'
 
 [tasks.build]
-run = "tools/build-bundles.sh"
+shell = "nix develop \"{{config_root}}\" --command bash -euo pipefail -c"
+description = "Build container images and app bundles."
+run = 'bash scripts/build-bundles.sh "$@"'
 
 [tasks.build-no-images]
-run = "tools/build-bundles.sh --no-images"
+description = "Build app bundles without image payloads."
+run = 'bash scripts/build-bundles.sh --no-images "$@"'
 
 [tasks.test]
-run = "tools/test.sh"
+description = "Run static checks and any explicitly configured VM tests."
+run = 'uv run --locked --group dev pytest tests "$@"'
 
 [tasks.test-image]
-run = "tools/build-test-image.sh"
+shell = "nix develop \"{{config_root}}\" --command bash -euo pipefail -c"
+description = "Build the Bakery image used by the VM tests."
+run = "bash scripts/build-test-image.sh"
 
 [tasks.vm-test]
-run = 'tools/vm-test.sh "${APP:-modbus-mqtt-gateway}"'
+shell = "nix develop \"{{config_root}}#system-tests\" --command bash -euo pipefail -c"
+description = "Run one app's VM tests, or pass all to run every app."
+run = 'bash scripts/vm-test.sh "$@"'
+
+[tasks."release:collect"]
+shell = "nix develop \"{{config_root}}\" --command bash -euo pipefail -c"
+description = "Collect built app bundles and hashes; set ARCH."
+run = "bash scripts/collect-release.sh"
+
+[tasks.publish]
+shell = "nix develop \"{{config_root}}\" --command bash -euo pipefail -c"
+description = "Publish tagged bundles to Nexigon using configured credentials."
+run = "bash scripts/publish-nexigon.sh"

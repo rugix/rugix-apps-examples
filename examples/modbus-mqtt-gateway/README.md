@@ -17,5 +17,5 @@ fleet management, OTA, device identity, or cloud telemetry.
 ## Bundle
 
 ```sh
-../../tools/build-bundles.sh --example modbus-mqtt-gateway
+mise -C ../.. run build -- --example modbus-mqtt-gateway
 ```

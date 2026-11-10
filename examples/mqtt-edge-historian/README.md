@@ -16,5 +16,5 @@ fleet management, OTA, device identity, or cloud telemetry.
 ## Bundle
 
 ```sh
-../../tools/build-bundles.sh --example mqtt-edge-historian
+mise -C ../.. run build -- --example mqtt-edge-historian
 ```
