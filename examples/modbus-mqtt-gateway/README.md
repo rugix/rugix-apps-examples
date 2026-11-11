@@ -16,6 +16,8 @@ fleet management, OTA, device identity, or cloud telemetry.
 
 ## Bundle
 
+From this example directory, with the [build prerequisites](../../README.md#quick-start) installed:
+
 ```sh
 mise -C ../.. run build -- --example modbus-mqtt-gateway
 ```

@@ -26,6 +26,8 @@ Open <http://localhost:8080> to view the page.
 
 ## Bundle
 
+From this example directory, with the [build prerequisites](../../README.md#quick-start) installed:
+
 ```sh
 mise -C ../.. run build -- --example python-web-server
 ```

@@ -25,7 +25,7 @@ translation, buffering, and process data APIs.
 ## Quick Start
 
 On x86-64 or AArch64 Linux, install mise, Docker Engine with its CLI, and
-Skopeo. Install Rugix Bundler, Nexigon CLI, Python, and uv through mise:
+Skopeo. Then run:
 
 ```sh
 mise install
@@ -54,9 +54,6 @@ For a fast structural check without bundling container images:
 mise run build-no-images
 mise run test
 ```
-
-Python dependencies are locked in `uv.lock`; VM tests install the pinned
-Rugix Testkit dependency without requiring an adjacent checkout.
 
 ## Prebuilt App Bundles
 
