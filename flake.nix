@@ -19,6 +19,7 @@
           default = pkgs.mkShell {
             packages = with pkgs; [
               skopeo
+              jq
               openssh
             ];
           };

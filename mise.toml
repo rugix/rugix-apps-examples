@@ -9,7 +9,6 @@ description = "Build the helper container images with Docker."
 run = 'bash scripts/docker-build.sh "$@"'
 
 [tasks.build]
-shell = "nix develop \"{{config_root}}\" --command bash -euo pipefail -c"
 description = "Build container images and app bundles."
 run = 'bash scripts/build-bundles.sh "$@"'
 
@@ -22,21 +21,17 @@ description = "Run static checks and any explicitly configured VM tests."
 run = 'uv run --locked --group dev pytest tests "$@"'
 
 [tasks.test-image]
-shell = "nix develop \"{{config_root}}\" --command bash -euo pipefail -c"
 description = "Build the Bakery image used by the VM tests."
 run = "bash scripts/build-test-image.sh"
 
 [tasks.vm-test]
-shell = "nix develop \"{{config_root}}#system-tests\" --command bash -euo pipefail -c"
 description = "Run one app's VM tests, or pass all to run every app."
 run = 'bash scripts/vm-test.sh "$@"'
 
 [tasks."release:collect"]
-shell = "nix develop \"{{config_root}}\" --command bash -euo pipefail -c"
 description = "Collect built app bundles and hashes; set ARCH."
 run = "bash scripts/collect-release.sh"
 
 [tasks.publish]
-shell = "nix develop \"{{config_root}}\" --command bash -euo pipefail -c"
 description = "Publish tagged bundles to Nexigon using configured credentials."
 run = "bash scripts/publish-nexigon.sh"

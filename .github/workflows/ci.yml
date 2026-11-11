@@ -68,7 +68,7 @@ jobs:
         env:
           RUGIX_DIST_DIR: ${{ github.workspace }}/build/${{ matrix.arch }}
           RUGIX_PLATFORM: ${{ matrix.platform }}
-        run: mise run build
+        run: nix develop --command mise run build
 
       - name: Collect release assets
         env:
@@ -175,4 +175,4 @@ jobs:
               printf 'hub-url = "https://staging.nexigon.dev"\ntoken = "%s"\n' \
                   "${NEXIGON_STAGING_TOKEN}" >"${config}"
           )
-          NEXIGON_CLI_CONFIG="${config}" mise run publish
+          NEXIGON_CLI_CONFIG="${config}" nix develop --command mise run publish
