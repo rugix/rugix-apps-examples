@@ -24,7 +24,8 @@ translation, buffering, and process data APIs.
 
 ## Quick Start
 
-Install the current Rugix Bundler release through mise's GitHub backend:
+On x86-64 or AArch64 Linux, install mise, Docker Engine with its CLI, and
+Skopeo. Then run:
 
 ```sh
 mise install
@@ -36,14 +37,22 @@ Build app bundles in `dist/`:
 mise run build
 ```
 
-`tools/build-bundles.sh` uses Docker on the host to build local helper images
-before packaging them with Rugix Bundler.
+`mise run build` uses Docker on the host to build local helper images
+before packaging them with Rugix Bundler. Builds default to `linux/amd64`.
+For native ARM64 builds, run `RUGIX_PLATFORM=linux/arm64 mise run build`.
+
+If you use Nix with flakes enabled, an optional shell provides Skopeo, jq,
+and SSH tools:
+
+```sh
+nix develop --command mise run build
+```
 
 For a fast structural check without bundling container images:
 
 ```sh
-tools/build-bundles.sh --no-images
-tools/test.sh
+mise run build-no-images
+mise run test
 ```
 
 ## Prebuilt App Bundles
@@ -76,21 +85,25 @@ CI also publishes every release to the `default` repository on
 `staging.nexigon.dev`, for demos and testing. Each example is a package
 of the same name, which must exist. The release becomes a version tagged with
 the release tag and `latest`, with the bundles' hashes as asset metadata. See
-`tools/publish-nexigon.sh` for details.
+`scripts/publish-nexigon.sh` for details.
 
 ## VM Testing
 
 The optional VM path uses Rugix Bakery to create a Debian EFI test image with
-Rugix Ctrl, Docker, Docker Compose, SSH, and network setup.
+Rugix Ctrl, Docker, Docker Compose, SSH, and network setup. Building the image
+needs Docker or Podman and `ssh-keygen` on the host. Running VM tests also
+requires QEMU, OVMF firmware, and an SSH client. Set `RUGIX_OVMF_CODE_AMD64`
+and `RUGIX_OVMF_VARS_AMD64` if the firmware is outside a standard system path.
+The test image is x86-64; QEMU uses software emulation on ARM64 hosts.
 
 The bundled `vm/run-bakery` wrapper pins the latest stable Rugix Bakery release
 known at the time of writing, `v0.9.3`. Override it with `RUGIX_VERSION` or
 `RUGIX_BAKERY_IMAGE` when testing a newer Bakery image.
 
 ```sh
-tools/build-test-image.sh
-tools/build-bundles.sh
-tools/vm-test.sh modbus-mqtt-gateway
+mise run test-image
+mise run build
+mise run vm-test modbus-mqtt-gateway
 ```
 
 Each app has its own pytest module under `tests/vm/`. The shared fixture boots
@@ -99,10 +112,16 @@ activates generation `1`, and waits for `rugix-ctrl apps info` to report the app
 as running. The per-app test then checks the workload from inside the app's
 Docker Compose service.
 
+An optional Nix shell supplies QEMU, OVMF, and SSH tools:
+
+```sh
+nix develop .#system-tests --command mise run vm-test modbus-mqtt-gateway
+```
+
 Run all VM app tests with:
 
 ```sh
-tools/vm-test.sh all
+mise run vm-test all
 ```
 
 ## Open Source Status

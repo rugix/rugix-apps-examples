@@ -7,7 +7,7 @@ ONLY_EXAMPLE=""
 
 usage() {
     cat <<'EOF'
-Usage: tools/docker-build.sh [OPTIONS]
+Usage: scripts/docker-build.sh [OPTIONS]
 
 Options:
   --example NAME      Build one example.

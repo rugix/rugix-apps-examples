@@ -11,13 +11,13 @@ ONLY_EXAMPLE=""
 
 usage() {
     cat <<'EOF'
-Usage: tools/build-bundles.sh [OPTIONS]
+Usage: scripts/build-bundles.sh [OPTIONS]
 
 Options:
   --example NAME      Build one example.
   --platform VALUE    Image platform for Docker builds/pulls, default linux/amd64.
   --no-images         Pack bundles without container image payloads.
-  --skip-build        Do not run tools/docker-build.sh first.
+  --skip-build        Do not run scripts/docker-build.sh first.
   -h, --help          Show this help.
 EOF
 }
@@ -69,7 +69,7 @@ for example_dir in "${example_dirs[@]}"; do
     echo "building ${name}"
 
     if [[ "${SKIP_BUILD}" != true && "${NO_IMAGES}" != true ]]; then
-        "${ROOT}/tools/docker-build.sh" --platform "${PLATFORM}" --example "${name}"
+        "${ROOT}/scripts/docker-build.sh" --platform "${PLATFORM}" --example "${name}"
     fi
 
     cmd=(

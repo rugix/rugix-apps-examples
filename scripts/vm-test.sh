@@ -3,10 +3,10 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP="${1:-modbus-mqtt-gateway}"
+if [ "$#" -gt 0 ]; then shift; fi
 IMAGE="${RUGIX_TEST_IMAGE:-"${ROOT}/vm/build/apps-test-amd64/system.img"}"
 BUNDLE_DIR="${RUGIX_BUNDLE_DIR:-"${ROOT}/dist"}"
 KEY="${RUGIX_TEST_SSH_KEY:-"${ROOT}/vm/ssh/id_ed25519"}"
-TESTKIT="${RUGIX_TESTKIT:-"${ROOT}/../rugix-testkit"}"
 TARGET="tests/vm"
 
 case "${APP}" in
@@ -33,7 +33,7 @@ esac
 
 if [[ ! -f "${IMAGE}" ]]; then
     echo "test image missing: ${IMAGE}" >&2
-    echo "run tools/build-test-image.sh" >&2
+    echo "run mise run test-image" >&2
     exit 1
 fi
 if [[ "${APP}" == "all" ]]; then
@@ -44,7 +44,7 @@ if [[ "${APP}" == "all" ]]; then
         "${BUNDLE_DIR}/python-web-server.rugixb"; do
         if [[ ! -f "${bundle}" ]]; then
             echo "app bundle missing: ${bundle}" >&2
-            echo "run tools/build-bundles.sh" >&2
+            echo "run mise run build" >&2
             exit 1
         fi
     done
@@ -52,13 +52,13 @@ else
     bundle="${BUNDLE_DIR}/${APP}.rugixb"
     if [[ ! -f "${bundle}" ]]; then
         echo "app bundle missing: ${bundle}" >&2
-        echo "run tools/build-bundles.sh" >&2
+        echo "run mise run build" >&2
         exit 1
     fi
 fi
 if [[ ! -f "${KEY}" ]]; then
     echo "SSH key missing: ${KEY}" >&2
-    echo "run tools/build-test-image.sh" >&2
+    echo "run mise run test-image" >&2
     exit 1
 fi
 
@@ -66,9 +66,5 @@ export RUGIX_TEST_IMAGE="${IMAGE}"
 export RUGIX_BUNDLE_DIR="${BUNDLE_DIR}"
 export RUGIX_TEST_SSH_KEY="${KEY}"
 
-if command -v uv >/dev/null 2>&1; then
-    (cd "${ROOT}" && uv run --no-project --with-editable "${TESTKIT}" --with pytest pytest "${TARGET}" -s)
-else
-    export PYTHONPATH="${TESTKIT}/src${PYTHONPATH:+:${PYTHONPATH}}"
-    (cd "${ROOT}" && python3 -m pytest "${TARGET}" -s)
-fi
+cd "$ROOT"
+exec uv run --locked --extra vm pytest "$TARGET" -s "$@"
