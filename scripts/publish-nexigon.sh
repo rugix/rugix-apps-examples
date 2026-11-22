@@ -14,6 +14,8 @@
 #   DIST_DIR             Directory with the release assets (default: dist).
 #   NEXIGON_CLI          Nexigon CLI executable (default: nexigon-cli).
 #   NEXIGON_CLI_CONFIG   Nexigon CLI configuration file (optional).
+#   NEXIGON_ORGANIZATION Organization of the repository, required with a user
+#                        token (optional).
 #   SOURCE_COMMIT        Commit of the release (default: HEAD).
 
 set -euo pipefail
@@ -29,11 +31,13 @@ require_variable() {
     fi
 }
 
+# A user token needs `--organization`; an organization API token selects its own.
 run_cli() {
     if [ -n "${NEXIGON_CLI_CONFIG:-}" ]; then
-        "${NEXIGON_CLI}" --config "${NEXIGON_CLI_CONFIG}" "$@"
+        "${NEXIGON_CLI}" --config "${NEXIGON_CLI_CONFIG}" \
+            ${NEXIGON_ORGANIZATION:+--organization "${NEXIGON_ORGANIZATION}"} "$@"
     else
-        "${NEXIGON_CLI}" "$@"
+        "${NEXIGON_CLI}" ${NEXIGON_ORGANIZATION:+--organization "${NEXIGON_ORGANIZATION}"} "$@"
     fi
 }
 
