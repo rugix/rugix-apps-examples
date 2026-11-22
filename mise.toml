@@ -2,7 +2,7 @@
 python = "3.12"
 uv = "latest"
 "github:rugix/rugix" = { version = "1.3.0", matching = "unknown-linux-musl.tar", filter_bins = "rugix-bundler" }
-"github:nexigon/nexigon" = { version = "0.6.0", matching = "unknown-linux-musl.tar.gz", filter_bins = "nexigon-cli" }
+"github:nexigon/nexigon" = { version = "0.7.0", matching = "unknown-linux-musl.tar.gz", filter_bins = "nexigon-cli" }
 
 [tasks.docker-build]
 description = "Build the helper container images with Docker."
